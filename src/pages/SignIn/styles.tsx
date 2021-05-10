@@ -26,3 +26,50 @@ export const Title = styled.Text`
     color: #707070;
     font-style: italic;
 `;
+
+export const FormView = styled.View`
+    width: 80%;
+    background: #FFFFFF;
+    border-radius: 10px;
+    border-width: 1px  ;
+    border-color: #EBEBEB;
+    margin-top: 26px;
+`;
+
+
+export const Button = styled.TouchableOpacity`
+  height: 60px;
+  background: transparent;
+  border-radius: 10px;
+  margin-top: 8px;
+  margin-bottom: 10px;
+  
+
+  justify-content: center;
+  align-items: center;
+`;
+
+export const ButtonText = styled.Text`
+  color: #312e38;
+  font-size: 18px;
+  font-size: 30px;
+  font-style: italic;
+  font-weight: 700;
+  color: #B5C401;
+`;
+
+
+export const TextForgotPassword = styled.Text`
+    font-style: italic;
+    color: #C1C1C1;
+    text-align: right;
+    margin: 24px;
+`;
+
+export const TextSignUp = styled.Text`
+    font-style: italic;
+    font-weight: 700;
+    font-size: 30px;
+    color: #707070;
+    margin-top: 38px;
+`;
