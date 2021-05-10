@@ -1,8 +1,9 @@
 import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { useField } from '@unform/core';
 import { TextInputProps } from 'react-native';
-import { Container, TextInput } from './styles';
-import {FloatingLabelInput} from 'react-native-floating-label-input';
+import { Container, Label, TextInput, } from './styles';
+import {Animated} from 'react-native'
+
 
 interface InputProps extends TextInputProps {
     name: string;
@@ -65,6 +66,7 @@ const Input: React.ForwardRefRenderFunction<InputRef, InputProps> = ({ name, con
 
     return (
         <Container style={containerStyle} isFocused={isFocused} isError={!!error}>
+            <Label isValue={ inputValueRef.current.value} isFocused={isFocused} isError={!!error} >{name}</Label>
             <TextInput
                 ref={inputElementRef}
                 onFocus={handleInputFocus}
@@ -76,18 +78,7 @@ const Input: React.ForwardRefRenderFunction<InputRef, InputProps> = ({ name, con
                 }}
                 {...rest}
             />
-            {/* <FloatingLabelInput
-                label={''}
-                ref={inputElementRef}
-                onFocus={handleInputFocus}
-                onBlur={handleInputBlur}
-                defaultValue={defaultValue}
-                placeholderTextColor="#9D9D9D"
-                onChangeText={value => {
-                    inputValueRef.current.value = value;
-                }}
-                {...rest} 
-            /> */}
+             
         </Container>
     )
 }

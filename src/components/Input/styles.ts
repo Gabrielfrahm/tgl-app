@@ -3,6 +3,7 @@ import styled, { css } from 'styled-components/native';
 interface ContainerProps {
   isFocused: boolean;
   isError: boolean;
+  isValue: string;
 }
 
 export const Container = styled.View<ContainerProps>`
@@ -37,3 +38,29 @@ export const TextInput = styled.TextInput.attrs({
   font-style: italic;
 `;
 
+export const Label = styled.Text<ContainerProps>`
+  position: absolute;
+  margin: 15px;
+  color: #999;
+  font-size: 18px;
+  font-weight: 700;
+  font-style: italic;
+
+
+  ${props => props.isFocused && css`
+    color: #B5C401;
+    font-size: 10px;
+    margin: 5px;
+    top: 0;
+  `}
+
+  ${props => props.isValue ? css`
+    color: #B5C401;
+    font-size: 10px;
+    margin: 5px;
+    top: 0;
+    
+  `: null}
+
+
+`;

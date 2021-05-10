@@ -5,7 +5,7 @@ import { Container } from './styles'
 const Footer = () => {
     return (
         <Container>
-            <Text style={{ color: '#707070', fontSize: 15,}}>
+            <Text style={{ color: '#707070', fontSize: 15, textAlign: 'center'}}>
                 Copyright 2020 Luby Software
             </Text>
         </Container>
