@@ -8,10 +8,11 @@ import Footer from '../../components/Footer';
 import { useNavigation } from '@react-navigation/native';
 import * as Yup from 'yup';
 
-import { Container, FormView, Hr, Logo, Title, Button, ButtonText,TextSignUp } from './styles';
-import { useAuth } from '../../hooks/Auth';
+import Toast from 'react-native-tiny-toast'
 import getValidationErrors from '../../utils/getValidationErrors';
 import api from '../../services/api';
+import PrincipalButton from '../../components/PrincipalButton';
+import { Container, FormView, Hr, Logo, Title, Button, ButtonText, TextSignUp } from './styles';
 
 interface SignUpFormData {
     name: string;
@@ -24,9 +25,9 @@ const SignUp = () => {
     const [hidePassword, setHidePassword] = useState(true);
     const InputPasswordRef = useRef(null);
     const navigation = useNavigation();
-    const { user} = useAuth();
+    const [loading, setLoading] = useState(false);
 
-    const handleHidePassword = useCallback(async() => {
+    const handleHidePassword = useCallback(async () => {
         setHidePassword(!hidePassword);
     }, [hidePassword]);
 
@@ -42,8 +43,20 @@ const SignUp = () => {
             await schema.validate(data, {
                 abortEarly: false,
             });
+            setLoading(true);
 
             await api.post('users', data);
+
+            setLoading(false);
+
+            Toast.showSuccess('cadastrado com sucesso', {
+                position: Toast.position.CENTER,
+                containerStyle: { backgroundColor: 'green' },
+                textStyle: { fontSize: 20 },
+                mask: true,
+                maskStyle: {},
+            });
+
             navigation.navigate('signIn')
 
         } catch (err) {
@@ -52,12 +65,16 @@ const SignUp = () => {
                 formRef.current?.setErrors(errors);
                 return;
             }
-            Alert.alert(
-                'Erro no cadastro',
-                'Ocorreu um erro ao tentar fazer cadastro cheque as credenciais',
-            );
+            setLoading(true);
+            Toast.show(err.message, {
+                position: Toast.position.CENTER,
+                containerStyle: { backgroundColor: 'red' },
+                textStyle: { fontSize: 15 },
+                mask: true
+            });
+            setLoading(false);
         }
-    }, []);
+    }, [Toast, setLoading]);
 
     return (
         <>
@@ -95,13 +112,12 @@ const SignUp = () => {
                         </TouchableOpacity>
 
                         <View style={{ borderWidth: 1, borderColor: '#EBEBEB' }} />
-                        <Button onPress={() => {
-                            formRef.current?.submitForm()
-                        }}>
-                            <ButtonText>
-                                Register <AntDesign name="arrowright" size={30} color="#B5C401" />
-                            </ButtonText>
-                        </Button>
+                        <PrincipalButton
+                            loading={loading}
+                            onPress={() => formRef.current?.submitForm()}
+                        >
+                            Register
+                        </PrincipalButton>
                     </FormView>
                     <Button onPress={() => {
                         navigation.navigate("signIn");

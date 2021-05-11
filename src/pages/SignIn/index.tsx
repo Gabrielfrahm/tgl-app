@@ -10,8 +10,10 @@ import * as Yup from 'yup';
 import getValidationErrors from '../../utils/getValidationErrors';
 import { useAuth } from '../../hooks/Auth';
 
-import { Container, FormView, Hr, Logo, Title, Button, ButtonText, TextForgotPassword, TextSignUp } from './styles';
+import { Container, FormView, Hr, Logo, Title, Button, TextForgotPassword, TextSignUp } from './styles';
 import api from '../../services/api';
+import PrincipalButton from '../../components/PrincipalButton';
+import Toast from 'react-native-tiny-toast';
 
 interface SignInFormData {
     email: string;
@@ -21,6 +23,7 @@ interface SignInFormData {
 const SingIn: React.FC = () => {
     const formRef = useRef<FormHandles>(null);
     const [hidePassword, setHidePassword] = useState(true);
+    const [loading, setLoading] = useState(false);
     const InputPasswordRef = useRef(null);
     const navigation = useNavigation();
     const { signIn } = useAuth();
@@ -42,12 +45,11 @@ const SingIn: React.FC = () => {
                 await schema.validate(data, {
                     abortEarly: false,
                 });
-
+                
                 await signIn({
                     email: data.email,
                     password: data.password,
                 });
-                
 
             } catch (err) {
                 if (err instanceof Yup.ValidationError) {
@@ -55,12 +57,16 @@ const SingIn: React.FC = () => {
                     formRef.current?.setErrors(errors);
                     return;
                 }
-                Alert.alert(
-                    'Erro na autenticação',
-                    err.message,
-                );
+                setLoading(true);
+                Toast.show(err.message, {
+                    position: Toast.position.CENTER,
+                    containerStyle: { backgroundColor: 'red' },
+                    textStyle: { fontSize: 15 },
+                    mask: true
+                });
+                setLoading(false);
             }
-        }, [signIn]);
+        }, [signIn, Toast, setLoading]);
 
     return (
         <>
@@ -92,13 +98,12 @@ const SingIn: React.FC = () => {
 
                         <View style={{ borderWidth: 1, borderColor: '#EBEBEB' }} />
                         <TextForgotPassword onPress={() => navigation.navigate('forgot-password')}>I forget my password</TextForgotPassword>
-                        <Button onPress={() => {
-                            formRef.current?.submitForm();
-                        }}>
-                            <ButtonText>
-                                Log in <AntDesign name="arrowright" size={30} color="#B5C401" />
-                            </ButtonText>
-                        </Button>
+                        <PrincipalButton
+                            loading={loading}
+                            onPress={() => formRef.current?.submitForm()}
+                        >
+                            Log In
+                        </PrincipalButton>
                     </FormView>
                     <Button onPress={() => {
                         navigation.navigate('signUp');
