@@ -2,26 +2,61 @@ import React, { useCallback, useRef, useState } from 'react';
 import { Form } from '@unform/mobile';
 import { FormHandles } from '@unform/core';
 import Input from '../../components/Input';
-import { View, TouchableOpacity, Text } from 'react-native';
-import { AntDesign, FontAwesome } from '@expo/vector-icons';
-
-import { Container, FormView, Hr, Logo, Title, Button, ButtonText, TextForgotPassword, TextSignUp } from './styles';
+import { View, Alert, ToastAndroid } from 'react-native';
+import { AntDesign, } from '@expo/vector-icons';
 import Footer from '../../components/Footer';
 import { useNavigation } from '@react-navigation/native';
+import * as Yup from 'yup';
+import getValidationErrors from '../../utils/getValidationErrors';
+import api from '../../services/api';
+import Toast from 'react-native-tiny-toast'
+import { Container, FormView, Hr, Logo, Title, Button, ButtonText, TextForgotPassword, TextSignUp } from './styles';
+
+interface ForgotPassword {
+    email: string;
+}
 
 const ForgotPassword = () => {
     const formRef = useRef<FormHandles>(null);
-    const [hidePassword, setHidePassword] = useState(true);
-    const InputPasswordRef = useRef(null);
     const navigation = useNavigation();
+    // const toast = Toast.showLoading('Loading...')
 
-    const handleHidePassword = useCallback(() => {
-        setHidePassword(!hidePassword);
-    }, [hidePassword]);
 
-    const handleSubmit = useCallback(() => {
-        console.log('dalae')
-    }, []);
+    const handleSubmit = useCallback(async (data: ForgotPassword) => {
+        try {
+            // Toast.showLoading('Loading...', {visible: true});
+            formRef.current?.setErrors({});
+            const schema = Yup.object().shape({
+                email: Yup.string().email('Digite um email valido').required('E-mail obrigatório'),
+            });
+
+            await schema.validate(data, {
+                abortEarly: false,
+            });
+
+            await api.post('/forgot-password', data);
+            Toast.showSuccess('Link enviado com sucesso', {
+                position: Toast.position.CENTER,
+                containerStyle: {backgroundColor: 'green'},
+                textStyle: {fontSize: 20},
+                mask: true,
+                maskStyle: {},
+            });
+            Toast.showLoading('Loading...').hide();
+        } catch (err) {
+            if (err instanceof Yup.ValidationError) {
+                const errors = getValidationErrors(err);
+                formRef.current?.setErrors(errors);
+                return;
+            }
+            Toast.show(err.message, {
+                position: Toast.position.CENTER,
+                containerStyle: {backgroundColor: 'red'},
+                textStyle: {fontSize: 15},
+                mask: true
+            });
+        }
+    }, [Toast]);
 
     return (
         <>
@@ -43,7 +78,7 @@ const ForgotPassword = () => {
                             formRef.current?.submitForm()
                         }}>
                             <ButtonText>
-                                Register <AntDesign name="arrowright" size={30} color="#B5C401" />
+                                Send link <AntDesign name="arrowright" size={30} color="#B5C401" />
                             </ButtonText>
                         </Button>
                     </FormView>
@@ -58,12 +93,12 @@ const ForgotPassword = () => {
                         navigation.navigate("signUp");
                     }}>
                         <TextSignUp>
-                            Sign up<AntDesign name="arrowright" size={30} color="#707070" /> 
+                            Sign up<AntDesign name="arrowright" size={30} color="#707070" />
                         </TextSignUp>
                     </Button>
                 </Form>
-            <Footer />
-        </Container>
+                <Footer />
+            </Container>
         </>
     )
 }

@@ -2,26 +2,65 @@ import React, { useCallback, useRef, useState } from 'react';
 import { Form } from '@unform/mobile';
 import { FormHandles } from '@unform/core';
 import Input from '../../components/Input';
-import { View, TouchableOpacity, Text } from 'react-native';
+import { View, TouchableOpacity, Alert } from 'react-native';
 import { AntDesign, FontAwesome } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import Footer from '../../components/Footer';
+import * as Yup from 'yup';
+import getValidationErrors from '../../utils/getValidationErrors';
+import { useAuth } from '../../hooks/Auth';
 
 import { Container, FormView, Hr, Logo, Title, Button, ButtonText, TextForgotPassword, TextSignUp } from './styles';
+import api from '../../services/api';
 
-const SingIn = () => {
+interface SignInFormData {
+    email: string;
+    password: string;
+}
+
+const SingIn: React.FC = () => {
     const formRef = useRef<FormHandles>(null);
     const [hidePassword, setHidePassword] = useState(true);
     const InputPasswordRef = useRef(null);
     const navigation = useNavigation();
+    const { signIn } = useAuth();
 
     const handleHidePassword = useCallback(() => {
         setHidePassword(!hidePassword);
     }, [hidePassword]);
 
-    const handleSubmit = useCallback(() => {
-        console.log('dalae')
-    }, []);
+
+    const handleSubmit = useCallback(
+        async (data: SignInFormData) => {
+            try {
+                formRef.current?.setErrors({});
+                const schema = Yup.object().shape({
+                    email: Yup.string().email('Digite um email valido').required('E-mail obrigatório'),
+                    password: Yup.string().required('Senha obrigatório'),
+                });
+
+                await schema.validate(data, {
+                    abortEarly: false,
+                });
+
+                await signIn({
+                    email: data.email,
+                    password: data.password,
+                });
+                
+
+            } catch (err) {
+                if (err instanceof Yup.ValidationError) {
+                    const errors = getValidationErrors(err);
+                    formRef.current?.setErrors(errors);
+                    return;
+                }
+                Alert.alert(
+                    'Erro na autenticação',
+                    err.message,
+                );
+            }
+        }, [signIn]);
 
     return (
         <>
@@ -31,14 +70,13 @@ const SingIn = () => {
                 <Title>Authentication</Title>
                 <Form ref={formRef} onSubmit={handleSubmit}>
                     <FormView >
-                        
                         <Input
                             name="email"
                             placeholderTextColor="#9D9D9D"
                             selectionColor={'#B5C401'}
                         />
                         <View style={{ borderWidth: 1, borderColor: '#EBEBEB' }} />
-                       
+
                         <Input
                             ref={InputPasswordRef}
                             name="password"
@@ -55,7 +93,7 @@ const SingIn = () => {
                         <View style={{ borderWidth: 1, borderColor: '#EBEBEB' }} />
                         <TextForgotPassword onPress={() => navigation.navigate('forgot-password')}>I forget my password</TextForgotPassword>
                         <Button onPress={() => {
-                            formRef.current?.submitForm()
+                            formRef.current?.submitForm();
                         }}>
                             <ButtonText>
                                 Log in <AntDesign name="arrowright" size={30} color="#B5C401" />

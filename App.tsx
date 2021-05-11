@@ -1,8 +1,9 @@
 import React from 'react';
 import 'react-native-gesture-handler';
-import AppProvider from './src/routes';
+import AppProvider from './src/hooks';
 import {NavigationContainer} from '@react-navigation/native';
 import { View, StatusBar } from 'react-native';
+// import Toast from 'react-native-toast-message';
 
 import Routes from './src/routes';
 

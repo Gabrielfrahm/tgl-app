@@ -1,13 +1,11 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import asyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import api from '../services/api';
-// import AsyncStorage from '@react-native-community/async-storage';
 
 interface User {
   id: string;
   name: string;
   email: string;
-  avatar_url: string;
 }
 
 interface AuthState {
@@ -19,7 +17,6 @@ interface SignInCredentials {
   email: string;
   password: string;
 }
-
 
 interface AuthContextData {
   user: User;
@@ -38,13 +35,13 @@ const AuthProvider: React.FC = ({ children }) => {
   useEffect(() => {
 
     async function loadStorageData(): Promise<void> {
-      const [token, user] = await asyncStorage.multiGet([
+      const [token, user] = await AsyncStorage.multiGet([
         '@TGL:token',
         '@TGL:user',
       ]);
 
       if (token[1] && user[1]) {
-        api.defaults.headers.authorization = `Bearer ${token[1]}`;
+        api.defaults.headers.Authorization = `Bearer ${token[1]}`;
 
         setData({ token: token[1], user: JSON.parse(user[1]) });
       }
@@ -60,21 +57,22 @@ const AuthProvider: React.FC = ({ children }) => {
       email,
       password,
     });
-
+    
     const { token, user } = response.data;
+    console.log(user)
 
-    await asyncStorage.multiSet([
-      ['@TGL:token', token],
+    await AsyncStorage.multiSet([
+      ['@TGL:token', token.token],
       ['@TGL:user', JSON.stringify(user)],
     ]);
 
-    api.defaults.headers.Authorization = `Bearer ${token}`;
+    api.defaults.headers.Authorization = `Bearer ${token.token}`;
 
     setData({ token, user });
   }, []);
 
   const signOut = useCallback(async () => {
-    await asyncStorage.multiRemove(['@TGL:token', '@TGL:user']);
+    await AsyncStorage.multiRemove(['@TGL:token', '@TGL:user']);
 
 
     setData({} as AuthState);
@@ -82,7 +80,7 @@ const AuthProvider: React.FC = ({ children }) => {
 
   const updateUser = useCallback(
     async (user: User) => {
-      await asyncStorage.setItem('@TGL:user', JSON.stringify(user));
+      await AsyncStorage.setItem('@TGL:user', JSON.stringify(user));
       setData({
         token: data.token,
         user: user,
