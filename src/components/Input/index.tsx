@@ -27,6 +27,7 @@ const Input: React.ForwardRefRenderFunction<InputRef, InputProps> = ({ name, con
     const inputValueRef = useRef<InputValueReference>({ value: '' });
 
     const [isFocused, setIsFocused] = useState(false);
+    const [isValue, setIsValue] = useState('');
     const [isFilled, setIsFilled] = useState(false);
 
 
@@ -65,14 +66,14 @@ const Input: React.ForwardRefRenderFunction<InputRef, InputProps> = ({ name, con
 
 
     return (
-        <Container style={containerStyle} isFocused={isFocused} isError={!!error}>
-            <Label isValue={ inputValueRef.current.value} isFocused={isFocused} isError={!!error} >{name}</Label>
+        <Container style={containerStyle} isValue={isValue} isFocused={isFocused} isError={!!error}>
+            <Label isValue={defaultValue || inputValueRef.current.value } isFocused={isFocused} isError={!!error} >{name}</Label>
             <TextInput
                 ref={inputElementRef}
                 onFocus={handleInputFocus}
                 onBlur={handleInputBlur}
                 defaultValue={defaultValue}
-                placeholderTextColor="#9D9D9D"
+                placeholderTextColor={"#9D9D9D"}
                 onChangeText={value => {
                     inputValueRef.current.value = value;
                 }}

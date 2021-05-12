@@ -1,13 +1,18 @@
 import React from 'react';
-import { Text, Button } from 'react-native';
-import { useAuth } from '../../hooks/Auth';
+import Header from '../../components/Header';
+import ButtonGames from '../../components/ButtonGames';
+
+import { DashHeader,Title,SubTitle } from './styles';
 
 const Dashboard = () => {
-    const { signOut } = useAuth();
     return (
         <>
-            <Text>Dashboard</Text>
-            <Button title="sair" onPress={() => signOut()} />
+            <Header />
+            <DashHeader>
+                <Title>RECENT GAMES</Title>
+                <SubTitle>Filters</SubTitle>
+                <ButtonGames color="red"  isActive={false} > jogo 1</ButtonGames>
+            </DashHeader>
         </>
     )
 }

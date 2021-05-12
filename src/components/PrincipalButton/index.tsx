@@ -11,7 +11,7 @@ const PrincipalButton: React.FC<ButtonProps> = ({ children, loading ,...rest }) 
   return (
     <Container  {...rest}>
       <ButtonText>
-        {loading ? 'Carregando...' : children }
+        {loading ? 'Carregando...' : children +' ' }
         {loading ? '' : <AntDesign name="arrowright" size={30} color="#B5C401" />}
         
       </ButtonText>
