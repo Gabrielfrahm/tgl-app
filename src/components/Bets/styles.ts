@@ -6,6 +6,7 @@ interface BetProps {
 
 export const Container = styled.View`
     height: 79px;
+    margin-bottom: 15px;
 `;
 
 export const Content = styled.View<BetProps>`

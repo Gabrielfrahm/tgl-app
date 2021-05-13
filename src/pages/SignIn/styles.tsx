@@ -74,3 +74,35 @@ export const TextSignUp = styled.Text`
     color: #707070;
     margin-top: 38px;
 `;
+
+export const Cover = styled.Text`
+    margin-top: 50px;
+    font-size: 45px;
+    color: #707070;
+    max-width: 200px;
+    text-align: center;
+    font-weight: bold;
+    font-style: italic;
+`;
+
+export const CoverFor = styled.Text`
+    background: #B5C401;
+    width: 102px;
+    height: 27px;
+    color: #fff;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    border-radius: 15px;
+    margin-top: 15px;
+    font-style: italic;
+`;
+
+export const CoverLottery = styled.Text`
+    font-size: 58px;
+    letter-spacing: 5px;
+    color: #707070;
+    text-align: center;
+    font-weight: bold;
+    font-style: italic;
+`;

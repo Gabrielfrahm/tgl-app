@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Form } from '@unform/mobile';
 import { FormHandles } from '@unform/core';
 import Input from '../../components/Input';
@@ -9,12 +9,13 @@ import Footer from '../../components/Footer';
 import * as Yup from 'yup';
 import getValidationErrors from '../../utils/getValidationErrors';
 import { useAuth } from '../../hooks/Auth';
-import LottieView from 'lottie-react-native';
-import teste from '../../assets/lf30_editor_texvfo6d.json';
-import { Container, FormView, Hr, Logo, Title, Button, TextForgotPassword, TextSignUp } from './styles';
-
 import PrincipalButton from '../../components/PrincipalButton';
 import Toast from 'react-native-tiny-toast';
+import LottieView from 'lottie-react-native';
+import teste from '../../assets/cover1.json';
+import { Animated, Text } from 'react-native';
+
+import { Container, FormView, Hr, Logo, Title, Button, TextForgotPassword, TextSignUp, Cover, CoverFor, CoverLottery } from './styles';
 
 interface SignInFormData {
     email: string;
@@ -28,14 +29,24 @@ const SingIn: React.FC = () => {
     const InputPasswordRef = useRef(null);
     const navigation = useNavigation();
     const { signIn } = useAuth();
+    const [animation] = useState(new Animated.Value(0));
+    const [active, setActive] = useState(false);
 
-    
+    useEffect( () => {
+        Animated.timing(animation, {toValue: 0, duration: 1000, useNativeDriver: true}).start();
+        Animated.timing(animation, {toValue: 0, duration: 1000, useNativeDriver: true}).start();
+        setActive(true);
+    }, [])
+
+    const onPressAnimation= () => {
+        Animated.timing(animation, { toValue: 1000, duration: 1000,  useNativeDriver: true }).start();
+    }
+
     const handleHidePassword = useCallback(() => {
         setHidePassword(!hidePassword);
     }, [hidePassword]);
 
-
-    const handleSubmit = useCallback(
+    const handleSubmit = useCallback( 
         async (data: SignInFormData) => {
             try {
                 formRef.current?.setErrors({});
@@ -47,7 +58,7 @@ const SingIn: React.FC = () => {
                 await schema.validate(data, {
                     abortEarly: false,
                 });
-                
+
                 await signIn({
                     email: data.email,
                     password: data.password,
@@ -72,8 +83,25 @@ const SingIn: React.FC = () => {
 
     return (
         <>
+            {active && (
+                <Animated.View onTouchStart={onPressAnimation} style={{
+                    height: '100%',
+                    width: '100%',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    position: 'absolute',
+                    zIndex: 1,
+                    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                    transform: [{ translateY: animation }]
+                }} >
+                    <LottieView renderMode="SOFTWARE" source={teste} autoPlay loop duration={4000} style={{ justifyContent: 'center', alignItems: 'center' }} />
+                    <Text style={{ color: '#000', position: 'absolute', top: 100, fontSize: 25, fontWeight: 'bold' }}>X</Text>
+                    <Cover>The Geatest App</Cover>
+                    <CoverFor>For</CoverFor>
+                    <CoverLottery>LOTTERY</CoverLottery>
+                </Animated.View>
+            )}
             <Container>
-            {/* <LottieView renderMode="SOFTWARE"  source={teste} autoPlay loop duration={4000} style={{ flex: 1, position: 'absolute', zIndex: 1, backgroundColor: 'white', opacity: 0.7  }} /> */}
                 <Logo>TGL</Logo>
                 <Hr />
                 <Title>Authentication</Title>

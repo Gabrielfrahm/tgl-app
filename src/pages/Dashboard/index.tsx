@@ -12,7 +12,6 @@ import { IState } from '../../store';
 import { GamesProps } from '../../store/modules/games/types';
 import { loadGames } from '../../store/modules/games/action';
 import { DashHeader, Title, SubTitle, ViewButtonGame, ViewBets } from './styles';
-import { View } from 'react-native';
 
 
 
@@ -115,16 +114,37 @@ const Dashboard = () => {
 
 
                 <ViewBets>
-                    {games.map(item => (
-                        <Bets
-                            key={item.numbers}
-                            price={formatValue(item.price)}
-                            color={item.game.color}
-                            numbers={item.numbers}
-                            date={formatDate(String(item.created_at))}
-                            betType={item.game.type}
-                        />
-                    ))}
+                    {
+                        !active && games.length !== 0
+                            ?
+                            games.map(item => (
+                                <Bets
+                                    key={item.numbers}
+                                    price={formatValue(item.price)}
+                                    color={item.game.color}
+                                    numbers={item.numbers}
+                                    date={formatDate(String(item.created_at))}
+                                    betType={item.game.type}
+                                />
+                            ))
+                            :
+                            gameSelected !== '' ? null : <SubTitle>Empty 😢</SubTitle>
+                    }
+
+                    {
+                        active && gameFind.length === 0
+                            ? <SubTitle>Empty 😢{gameSelected}</SubTitle>
+                            : gameFind.map(item => (
+                                <Bets
+                                    key={item.numbers}
+                                    price={formatValue(item.price)}
+                                    color={item.game.color}
+                                    numbers={item.numbers}
+                                    date={formatDate(String(item.created_at))}
+                                    betType={item.game.type}
+                                />
+                            ))
+                    }
                 </ViewBets>
 
             </DashHeader>
