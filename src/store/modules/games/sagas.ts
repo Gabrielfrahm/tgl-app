@@ -12,6 +12,7 @@ function* checkLoadGames() {
             yield put(loadGamesSuccess(availableSGamesResponse.data));
         }
     } catch (err) {
+        console.log('chegou');
         yield put(loadGamesFailure(true));
     }
     

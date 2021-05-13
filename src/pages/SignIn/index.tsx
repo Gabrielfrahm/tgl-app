@@ -9,9 +9,10 @@ import Footer from '../../components/Footer';
 import * as Yup from 'yup';
 import getValidationErrors from '../../utils/getValidationErrors';
 import { useAuth } from '../../hooks/Auth';
-
+import LottieView from 'lottie-react-native';
+import teste from '../../assets/lf30_editor_texvfo6d.json';
 import { Container, FormView, Hr, Logo, Title, Button, TextForgotPassword, TextSignUp } from './styles';
-import api from '../../services/api';
+
 import PrincipalButton from '../../components/PrincipalButton';
 import Toast from 'react-native-tiny-toast';
 
@@ -28,6 +29,7 @@ const SingIn: React.FC = () => {
     const navigation = useNavigation();
     const { signIn } = useAuth();
 
+    
     const handleHidePassword = useCallback(() => {
         setHidePassword(!hidePassword);
     }, [hidePassword]);
@@ -71,6 +73,7 @@ const SingIn: React.FC = () => {
     return (
         <>
             <Container>
+            {/* <LottieView renderMode="SOFTWARE"  source={teste} autoPlay loop duration={4000} style={{ flex: 1, position: 'absolute', zIndex: 1, backgroundColor: 'white', opacity: 0.7  }} /> */}
                 <Logo>TGL</Logo>
                 <Hr />
                 <Title>Authentication</Title>

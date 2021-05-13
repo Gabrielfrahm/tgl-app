@@ -2,6 +2,7 @@ import styled from 'styled-components/native';
 
 
 export const DashHeader = styled.View`
+    flex:1;
     height: 185px;
     padding: 25px;
 `;
@@ -27,6 +28,9 @@ export const ViewButtonGame = styled.ScrollView.attrs({
 })`
 `;
 
-export const ViewBets = styled.ScrollView`
-    flex: 1;
-`;
+export const ViewBets = styled.ScrollView.attrs({
+    contentContainerStyle: { paddingVertical: 0 },
+    showsVerticalScrollIndicator: false,
+})`
+    margin-top: 15px;
+`; 
