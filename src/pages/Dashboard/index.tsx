@@ -10,7 +10,7 @@ import { formatDate } from '../../utils/formatDate';
 import { useDispatch, useSelector } from 'react-redux';
 import { IState } from '../../store';
 import { GamesProps } from '../../store/modules/games/types';
-import { loadGames, loadGamesFailure } from '../../store/modules/games/action';
+import { loadGames } from '../../store/modules/games/action';
 import { DashHeader, Title, SubTitle, ViewButtonGame, ViewBets } from './styles';
 
 
@@ -27,7 +27,7 @@ export interface ShowBetsProps {
 
 
 const Dashboard = () => {
-
+    let arr: ShowBetsProps[] = [];
     const dispatch = useDispatch();
 
     // games
@@ -41,6 +41,7 @@ const Dashboard = () => {
 
     // name game selected
     const [gameSelected, setGameSelected] = useState('');
+    const [gameNames, setGameNames] = useState<String[]>([]);
 
     // active button game
     const [active, setActive] = useState(false);
@@ -48,7 +49,7 @@ const Dashboard = () => {
     // show erro api
     const [show, setShow] = useState(true);
 
-    //
+    // bets
     const [games, setGames] = useState<ShowBetsProps[]>([]);
     const [gameFilter, setGameFilter] = useState<ShowBetsProps[]>([]);
 
@@ -65,26 +66,47 @@ const Dashboard = () => {
     }, []);
 
     useEffect(() => {//initial bet
-        betsState.filter(item => item.type === gameSelected ?
-            api.get(`/game/bets/${item.id}`).then(
-                response => {
-                    setGameFilter( response.data);
-                }
-            ).catch(err => {
-                dispatch(loadGamesFailure(true));
-            })
-            : []
-        );
-        // const test = betsState.filter(item => item.type === gameSelected);
-        // console.log(test);
+        // betsState.filter(item => item.type === gameSelected ?
+        //     api.get(`/game/bets/${item.id}`).then(
+        //         response => {
+        //             setGameFilter(response.data);
+        //         }
+        //     )
+        //     : []
+        // );
     }, [betsState, gameSelected]);
 
-
-    const handleClickButtonGameFilter = useCallback((gameName: string) => {
-        // setActive(!active);
+    const handleClickButtonGameFilter = useCallback(async (gameName: string) => {
+        setActive(true);
         dispatch(loadGames());
         setGameSelected(gameName);
-    }, [active, gameSelected, betsState]);
+
+        const findItem = gameNames.findIndex(i => {
+            return gameName === i
+        });
+
+        if (findItem !== -1) {
+            gameNames.splice(findItem, 1);
+            setActive(false);
+        } else {
+            setGameNames([...gameNames, gameName]);
+        }
+
+        const findIdGame = betsState.findIndex(item => {
+            return item.type === gameName;
+        })
+
+        await api.get(`/game/bets/${findIdGame + 1}`).then(
+            response => {
+                arr = [...arr, response.data];
+                // setGames.push(response.data);
+            }
+        )
+    }, [active, gameSelected, betsState, gameNames, gameFilter]);
+    console.log( gameFilter)
+
+    const handleClickRemoveActive = useCallback(() => {
+    }, [gameSelected]);
 
     const handleDrawerClosed = useCallback(() => {
         if (errorState) {
@@ -114,8 +136,10 @@ const Dashboard = () => {
                                 onPress={() => handleClickButtonGameFilter(game.type)}
                                 title={game.type}
                                 color={game.color}
-                                isActive={gameSelected === game.type && active }
-                                removeActive={() => setActive(true)}
+                                isActive={
+                                    !!(gameNames.find(item => { return item === game.type }))
+                                }
+                                removeActive={handleClickRemoveActive}
                             >{game.type}</ButtonGames>
                         ))}
                     </ViewButtonGame>

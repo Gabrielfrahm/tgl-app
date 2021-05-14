@@ -4,16 +4,16 @@ import {Container, TextButton, TextX} from './styles'
 
 type ButtonProps = ButtonProperties & {
     color: string;
-    isActive?: boolean;
+    isActive?: boolean | undefined;
     removeActive?: () => void; 
 }
 
 const ButtonGames: React.FC<ButtonProps> = ({
-    children, color, isActive, ...rest
+    children, color, isActive, removeActive ,...rest
 }) => {
     return (
         <Container  isActive={isActive} color={color} {...rest}>
-            {isActive && <TextX >x</TextX> }
+            {isActive && <TextX onPress={removeActive} >x</TextX> }
             <TextButton isActive={isActive} color={color} >{children}</TextButton>
         </Container>
     );

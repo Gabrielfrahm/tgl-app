@@ -36,7 +36,7 @@ export const TextButton = styled.Text<ButtonProps>`
     }
 `;
 export const TextX = styled.Text`
-    font-size: 12px;
+    font-size: 15px;
     font-weight: bold ;
     font-style: italic;
     color: #fff;
