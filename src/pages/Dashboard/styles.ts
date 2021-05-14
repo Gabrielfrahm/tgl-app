@@ -29,7 +29,7 @@ export const ViewButtonGame = styled.ScrollView.attrs({
 `;
 
 export const ViewBets = styled.ScrollView.attrs({
-    contentContainerStyle: { paddingVertical: 0 },
+    contentContainerStyle: {  },
     showsVerticalScrollIndicator: false,
 })`
     margin-top: 15px;

@@ -10,7 +10,7 @@ import { formatDate } from '../../utils/formatDate';
 import { useDispatch, useSelector } from 'react-redux';
 import { IState } from '../../store';
 import { GamesProps } from '../../store/modules/games/types';
-import { loadGames } from '../../store/modules/games/action';
+import { loadGames, loadGamesFailure } from '../../store/modules/games/action';
 import { DashHeader, Title, SubTitle, ViewButtonGame, ViewBets } from './styles';
 
 
@@ -34,8 +34,23 @@ const Dashboard = () => {
     const betsState = useSelector<IState, GamesProps[]>(state => {
         return state.games.games;
     });
+    // erro games
+    const errorState = useSelector<IState>(state => {
+        return state.games.error;
+    });
 
+    // name game selected
     const [gameSelected, setGameSelected] = useState('');
+
+    // active button game
+    const [active, setActive] = useState(false);
+
+    // show erro api
+    const [show, setShow] = useState(true);
+
+    //
+    const [games, setGames] = useState<ShowBetsProps[]>([]);
+    const [gameFilter, setGameFilter] = useState<ShowBetsProps[]>([]);
 
     useEffect(() => {
         dispatch(loadGames());
@@ -44,7 +59,7 @@ const Dashboard = () => {
     useEffect(() => {
         api.get('/game/bets').then(
             response => {
-                setGames(response.data)
+                setGames(response.data);
             }
         );
     }, []);
@@ -53,29 +68,23 @@ const Dashboard = () => {
         betsState.filter(item => item.type === gameSelected ?
             api.get(`/game/bets/${item.id}`).then(
                 response => {
-                    setGameFind(response.data)
+                    setGameFilter( response.data);
                 }
-            )
+            ).catch(err => {
+                dispatch(loadGamesFailure(true));
+            })
             : []
         );
+        // const test = betsState.filter(item => item.type === gameSelected);
+        // console.log(test);
     }, [betsState, gameSelected]);
 
-    // erro games
-    const errorState = useSelector<IState>(state => {
-        return state.games.error;
-    });
-
-    const [active, setActive] = useState(false);
-
-    const [show, setShow] = useState(true);
-    const [games, setGames] = useState<ShowBetsProps[]>([]);
-    const [gameFind, setGameFind] = useState<ShowBetsProps[]>([]);
 
     const handleClickButtonGameFilter = useCallback((gameName: string) => {
-        setActive(!active);
+        // setActive(!active);
         dispatch(loadGames());
         setGameSelected(gameName);
-    }, [active]);
+    }, [active, gameSelected, betsState]);
 
     const handleDrawerClosed = useCallback(() => {
         if (errorState) {
@@ -85,7 +94,6 @@ const Dashboard = () => {
                     setGames(response.data)
                 }
             );
-
         } else {
             // setShow(true);
             setShow(false);
@@ -106,15 +114,15 @@ const Dashboard = () => {
                                 onPress={() => handleClickButtonGameFilter(game.type)}
                                 title={game.type}
                                 color={game.color}
-                                isActive={gameSelected === game.type ? active : false}
+                                isActive={gameSelected === game.type && active }
+                                removeActive={() => setActive(true)}
                             >{game.type}</ButtonGames>
                         ))}
                     </ViewButtonGame>
                 }
 
-
                 <ViewBets>
-                    {
+                    {/* {
                         !active && games.length !== 0
                             ?
                             games.map(item => (
@@ -144,6 +152,29 @@ const Dashboard = () => {
                                     betType={item.game.type}
                                 />
                             ))
+                    } */}
+                    {gameFilter.length === 0 || active === false ?
+                        games.map(item => (
+                            <Bets
+                                key={item.numbers}
+                                price={String(item.price)}
+                                color={item.game.color}
+                                numbers={item.numbers}
+                                date={formatDate(String(item.created_at))}
+                                betType={item.game.type}
+                            />
+                        ))
+                        :
+                        gameFilter.map(item => (
+                            <Bets
+                                key={item.numbers}
+                                price={String(item.price)}
+                                color={item.game.color}
+                                numbers={item.numbers}
+                                date={formatDate(String(item.created_at))}
+                                betType={item.game.type}
+                            />
+                        ))
                     }
                 </ViewBets>
 
@@ -151,6 +182,5 @@ const Dashboard = () => {
         </>
     )
 }
-
 
 export default Dashboard;

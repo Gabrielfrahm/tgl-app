@@ -35,3 +35,12 @@ export const TextButton = styled.Text<ButtonProps>`
         `
     }
 `;
+export const TextX = styled.Text`
+    font-size: 12px;
+    font-weight: bold ;
+    font-style: italic;
+    color: #fff;
+    position: absolute;
+    right: 6px;
+    top: 0;
+`;

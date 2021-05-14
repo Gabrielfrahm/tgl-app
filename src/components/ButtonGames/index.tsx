@@ -1,10 +1,11 @@
 import React  from 'react';
 import { ButtonProperties} from 'react-native';
-import {Container, TextButton} from './styles'
+import {Container, TextButton, TextX} from './styles'
 
 type ButtonProps = ButtonProperties & {
     color: string;
-    isActive?: boolean; 
+    isActive?: boolean;
+    removeActive?: () => void; 
 }
 
 const ButtonGames: React.FC<ButtonProps> = ({
@@ -12,6 +13,7 @@ const ButtonGames: React.FC<ButtonProps> = ({
 }) => {
     return (
         <Container  isActive={isActive} color={color} {...rest}>
+            {isActive && <TextX >x</TextX> }
             <TextButton isActive={isActive} color={color} >{children}</TextButton>
         </Container>
     );
