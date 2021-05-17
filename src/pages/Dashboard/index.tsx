@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { v4 as uuid } from 'uuid';
 import Header from '../../components/Header';
 import ButtonGames from '../../components/ButtonGames';
 import Backdrop from '../../components/Backdrop';
@@ -11,7 +10,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { IState } from '../../store';
 import { GamesProps } from '../../store/modules/games/types';
 import { loadGames } from '../../store/modules/games/action';
-import { DashHeader, Title, SubTitle, ViewButtonGame, ViewBets } from './styles';
+import { Title, SubTitle, ViewButtonGame, ViewBets, Container } from './styles';
 
 export interface ShowBetsProps {
     id: number;
@@ -113,7 +112,7 @@ const Dashboard = () => {
     return (
         <>
             <Header />
-            <DashHeader>
+            <Container>
                 <Title>RECENT GAMES</Title>
                 <SubTitle>Filters</SubTitle>
                 {errorState ? <Backdrop show={show} clicked={handleDrawerClosed} ><Title>Error</Title></Backdrop> :
@@ -132,14 +131,14 @@ const Dashboard = () => {
                         ))}
                     </ViewButtonGame>
                 }
-
-                <ViewBets>
+            </Container>
+            <ViewBets>
                     {gameFilter.length === 0 ?
                         games.length !== 0 ?
                             games.map(item => (
                                 <Bets
                                     key={item.numbers}
-                                    price={String(item.price)}
+                                    price={formatValue((item.price))}
                                     color={item.game.color}
                                     numbers={item.numbers}
                                     date={formatDate(String(item.created_at))}
@@ -159,8 +158,6 @@ const Dashboard = () => {
                         ))
                     }
                 </ViewBets>
-
-            </DashHeader>
         </>
     )
 }

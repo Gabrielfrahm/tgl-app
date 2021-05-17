@@ -1,8 +1,6 @@
 import styled from 'styled-components/native';
 
-
 export const Container = styled.View`
-    height: 25%;
     padding: 25px;
 `;
 
@@ -25,13 +23,22 @@ export const ViewButtonGame = styled.ScrollView.attrs({
     horizontal: true,
     showsHorizontalScrollIndicator: false,
 })`
-    flex: 1;
 `;
 
-export const ViewBets = styled.ScrollView.attrs({
-    contentContainerStyle: {  },
-    showsVerticalScrollIndicator: false,
-})`
-    padding: 0 25px;
+export const ViewDescription = styled.View`
     
-`; 
+`;
+
+export const TitleDescription = styled.Text`
+    color: #868686;
+    font-size: 17px;
+    font-style: italic;
+    font-weight: bold;
+`;
+
+export const BetDescription = styled.Text`
+    font-size: 14px;
+    color: #868686;
+    font-style: italic;
+    line-height: 20px;
+`;

@@ -6,6 +6,7 @@ import BetLogo from '../assets/bets.png';
 
 
 import Dashboard from '../pages/Dashboard';
+import NewBet from '../pages/NewBet';
 import Account from '../pages/Account';
 
 
@@ -59,7 +60,7 @@ const AppRoutes: React.FC = () => {
 
         >
             <App.Screen name="Home" component={Dashboard} />
-            <App.Screen name="$" component={Dashboard} options={{title: '',}} />
+            <App.Screen name="$" component={NewBet} options={{title: '',}} />
             <App.Screen name="Account" component={Account} />
 
         </App.Navigator>
