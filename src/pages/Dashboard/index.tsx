@@ -13,8 +13,6 @@ import { GamesProps } from '../../store/modules/games/types';
 import { loadGames } from '../../store/modules/games/action';
 import { DashHeader, Title, SubTitle, ViewButtonGame, ViewBets } from './styles';
 
-
-
 export interface ShowBetsProps {
     id: number;
     color: string;
@@ -27,7 +25,6 @@ export interface ShowBetsProps {
 
 
 const Dashboard = () => {
-    let arr: ShowBetsProps[] = [];
     const dispatch = useDispatch();
 
     // games
@@ -55,26 +52,21 @@ const Dashboard = () => {
 
     useEffect(() => {
         dispatch(loadGames());
-    }, [dispatch]);
 
-    useEffect(() => {
         api.get('/game/bets').then(
             response => {
                 setGames(response.data);
             }
         );
-    }, []);
 
-    useEffect(() => {//initial bet
-        // betsState.filter(item => item.type === gameSelected ?
-        //     api.get(`/game/bets/${item.id}`).then(
-        //         response => {
-        //             setGameFilter(response.data);
-        //         }
-        //     )
-        //     : []
-        // );
-    }, [betsState, gameSelected]);
+        let arr: ShowBetsProps[] = [];
+        gameNames.map(item => {
+            return games.map(i => i.game.type === item ? arr = [...arr, i] : []);
+        });
+
+        setGameFilter(arr);
+    }, [dispatch, gameNames]);
+
 
     const handleClickButtonGameFilter = useCallback(async (gameName: string) => {
         setActive(true);
@@ -91,22 +83,19 @@ const Dashboard = () => {
         } else {
             setGameNames([...gameNames, gameName]);
         }
+        const count = gameFilter.filter(item => item.game.type === gameName);
+        const findItemInGameFilter = gameFilter.findIndex(i => {
+            return gameName === i.game.type;
+        });
+        if (findItemInGameFilter !== -1) {
+            gameFilter.splice(findItemInGameFilter, count.length);
+        }
 
-        const findIdGame = betsState.findIndex(item => {
-            return item.type === gameName;
-        })
+    }, [gameNames, gameFilter]);
 
-        await api.get(`/game/bets/${findIdGame + 1}`).then(
-            response => {
-                arr = [...arr, response.data];
-                // setGames.push(response.data);
-            }
-        )
-    }, [active, gameSelected, betsState, gameNames, gameFilter]);
-    console.log( gameFilter)
-
-    const handleClickRemoveActive = useCallback(() => {
-    }, [gameSelected]);
+    const handleClickRemoveActive = useCallback((gameName: string) => {
+        handleClickButtonGameFilter(gameName);
+    }, [gameNames, gameFilter]);
 
     const handleDrawerClosed = useCallback(() => {
         if (errorState) {
@@ -117,7 +106,6 @@ const Dashboard = () => {
                 }
             );
         } else {
-            // setShow(true);
             setShow(false);
         }
     }, [errorState, dispatch,]);
@@ -139,57 +127,27 @@ const Dashboard = () => {
                                 isActive={
                                     !!(gameNames.find(item => { return item === game.type }))
                                 }
-                                removeActive={handleClickRemoveActive}
+                                removeActive={() => handleClickRemoveActive(game.type)}
                             >{game.type}</ButtonGames>
                         ))}
                     </ViewButtonGame>
                 }
 
                 <ViewBets>
-                    {/* {
-                        !active && games.length !== 0
-                            ?
+                    {gameFilter.length === 0 ?
+                        games.length !== 0 ?
                             games.map(item => (
                                 <Bets
                                     key={item.numbers}
-                                    price={formatValue(item.price)}
+                                    price={String(item.price)}
                                     color={item.game.color}
                                     numbers={item.numbers}
                                     date={formatDate(String(item.created_at))}
                                     betType={item.game.type}
                                 />
                             ))
-                            :
-                            gameSelected !== '' ? null : <SubTitle>Empty 😢</SubTitle>
-                    }
-
-                    {
-                        active && gameFind.length === 0
-                            ? <SubTitle>Empty 😢{gameSelected}</SubTitle>
-                            : gameFind.map(item => (
-                                <Bets
-                                    key={item.numbers}
-                                    price={formatValue(item.price)}
-                                    color={item.game.color}
-                                    numbers={item.numbers}
-                                    date={formatDate(String(item.created_at))}
-                                    betType={item.game.type}
-                                />
-                            ))
-                    } */}
-                    {gameFilter.length === 0 || active === false ?
-                        games.map(item => (
-                            <Bets
-                                key={item.numbers}
-                                price={String(item.price)}
-                                color={item.game.color}
-                                numbers={item.numbers}
-                                date={formatDate(String(item.created_at))}
-                                betType={item.game.type}
-                            />
-                        ))
-                        :
-                        gameFilter.map(item => (
+                            : <Title>Voce nao tem jogos ainda</Title>
+                        : gameFilter.map(item => (
                             <Bets
                                 key={item.numbers}
                                 price={String(item.price)}

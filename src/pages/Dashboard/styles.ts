@@ -3,7 +3,7 @@ import styled from 'styled-components/native';
 
 export const DashHeader = styled.View`
     flex:1;
-    height: 185px;
+    /* height: 185px; */
     padding: 25px;
 `;
 
@@ -29,7 +29,7 @@ export const ViewButtonGame = styled.ScrollView.attrs({
 `;
 
 export const ViewBets = styled.ScrollView.attrs({
-    contentContainerStyle: {  },
+    contentContainerStyle: {   },
     showsVerticalScrollIndicator: false,
 })`
     margin-top: 15px;
