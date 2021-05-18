@@ -2,7 +2,7 @@ import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef,
 import { useField } from '@unform/core';
 import { TextInputProps } from 'react-native';
 import { Container, Label, TextInput, } from './styles';
-import {Animated} from 'react-native'
+
 
 
 interface InputProps extends TextInputProps {
