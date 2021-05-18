@@ -33,7 +33,8 @@ const AppRoutes: React.FC = () => {
                         iconColor = focused ? '#B5C401' : '#C1C1C1';
                         return (
                             <View style={{ backgroundColor: '#B5C401', borderWidth: 5, borderColor: '#fff', width: 100, height: 100, borderRadius: 50, alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
-                                <Image source={BetLogo} style={{ marginTop: 4, width: 63, height: 62 }} />
+                               
+                                <Image source={BetLogo} style={{ marginTop: 4, width: 63, height: 62 }} /> 
                             </View>
                         )
                     }

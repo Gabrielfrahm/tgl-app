@@ -1,8 +1,6 @@
 import React from 'react';
 
-
-import { Container, Value } from './styles';
-
+import { Container, Value, TextX } from './styles';
 
 interface ButtonProps {
     valueNumber: string;
@@ -10,10 +8,11 @@ interface ButtonProps {
     onPress: () => void;
   }
   
-const NumberSelected: React.FC<ButtonProps> = ({valueNumber, color , onPress}) => {
+const NumberSelected: React.FC<ButtonProps> = ({valueNumber, color ,  onPress}) => {
 
     return (
         <Container onPress={onPress} color={color} >
+            <TextX onPress={onPress} >x</TextX> 
             <Value>{valueNumber}</Value>
         </Container>
     )

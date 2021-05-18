@@ -11,16 +11,15 @@ export const Container = styled.TouchableOpacity<ButtonProps>`
     border-width: 2px;
     border-color: ${props => props.color};
     border-radius: 25px;
-
+    justify-content: center;
+    align-items: center;
+    margin-right: 10px;
+    margin-bottom: 30px;
     ${props => props.isActive &&
         css`
             background-color: ${props.color};
         `
     }
-    justify-content: center;
-    align-items: center;
-    margin-right: 10px;
-    margin-bottom: 10px;
 `;
 
 export const TextButton = styled.Text<ButtonProps>`
