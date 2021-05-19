@@ -18,7 +18,7 @@ export const Content = styled.View<BetProps>`
 `;
 
 export const Numbers = styled.Text`
-    font-size: 16px;
+    font-size: 15px;
     color: #868686;
     font-weight: bold;
     font-style: italic;

@@ -64,7 +64,7 @@ const Dashboard = () => {
         });
 
         setGameFilter(arr);
-    }, [dispatch, gameNames]);
+    }, [dispatch, gameNames, games]);
 
 
     const handleClickButtonGameFilter = useCallback(async (gameName: string) => {
@@ -149,7 +149,7 @@ const Dashboard = () => {
                         : gameFilter.map(item => (
                             <Bets
                                 key={item.numbers}
-                                price={String(item.price)}
+                                price={formatValue(item.price)}
                                 color={item.game.color}
                                 numbers={item.numbers}
                                 date={formatDate(String(item.created_at))}

@@ -1,19 +1,24 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import Toast from 'react-native-tiny-toast';
 import { useDispatch, useSelector } from 'react-redux';
+import { addGamesFailure, addGamesRequest, addProductToCartRequest } from '../../store/modules/itemCart/action';
 import { IState } from '../../store';
+import { Item } from '../../store/modules/itemCart/type';
 import { GamesProps } from '../../store/modules/games/types';
 import { loadGames } from '../../store/modules/games/action';
-import api from '../../services/api';
-import { Ionicons } from '@expo/vector-icons';
-import Toast from 'react-native-tiny-toast';
+import { Ionicons, AntDesign } from '@expo/vector-icons';
+
+import { compareNumbers } from '../../utils/formSortArray';
+import { formatValue } from '../../utils/formatValue';
 
 import Header from '../../components/Header';
 import ButtonGames from '../../components/ButtonGames';
 import Backdrop from '../../components/Backdrop';
 import Numbers from '../../components/Numbers';
 import NumberSelected from '../../components/NumberSelected';
+import CartItem from '../../components/CartItem';
 
-import { View } from 'react-native';
+import { View, Animated, Text, ActivityIndicator } from 'react-native';
 import {
     Container,
     Title,
@@ -30,10 +35,29 @@ import {
     TextCompleteGame,
     ButtonClearGame,
     ButtonAddGame,
-    TextAddGame
+    TextAddGame,
+    ButtonCart,
+    Notification,
+    NotificationText,
+    CartView,
+    TitleCart,
+    TotalCartText,
+    TotalView,
+    SubtitleTotal,
+    PriceText,
+    FinalButton,
+    TextFinalButton
 } from './styles';
-import { addProductToCartRequest } from '../../store/modules/itemCart/action';
-import { Item } from '../../store/modules/itemCart/type';
+import api from '../../services/api';
+import { useAuth } from '../../hooks/Auth';
+import { useNavigation } from '@react-navigation/core';
+
+export interface ItemCartProps {
+    user_id: string;
+    game_id: number;
+    price: number;
+    numbers: string;
+}
 
 
 const NewBet: React.FC = () => {
@@ -41,7 +65,6 @@ const NewBet: React.FC = () => {
         dispatch(loadGames());
         setShow(true)
     }, []);
-    const dispatch = useDispatch();
 
     // games
     const betsState = useSelector<IState, GamesProps[]>(state => {
@@ -59,34 +82,45 @@ const NewBet: React.FC = () => {
 
     const itensInCart = useSelector<IState, Item[]>(state => {//state item in cart
         return state.itemCart.items;
-    })
+    });
 
     const cartPrice = useSelector<IState>(state => {//state cart price
         return state.itemCart.price;
-    })
+    });
 
-    console.log(itensInCart);
-    // active button game
+    const dispatch = useDispatch();
+
+    const { user } = useAuth();
+
+    const [animation] = useState(new Animated.Value(0));
+
+    const [showAnimation, setShowAnimation] = useState(false);
+
+    const navigation = useNavigation();
+
+    const [loader, setLoader] = useState(false);
+
     const [active, setActive] = useState(false);
-    // show erro api
+
     const [show, setShow] = useState(true);
 
     const [gameSelected, setGameSelected] = useState('');
 
-    const [infoGame, setInfoGame] = useState<GamesProps[]>([]);//initial game and game selected
+    const [infoGame, setInfoGame] = useState<GamesProps[]>([]);
 
-    const [numbers, setNumbers] = useState<number[]>([]);//get numbers of range bet
+    const [numbers, setNumbers] = useState<number[]>([]);
     const [numbersUser, setNumbersUser] = useState<number[]>([]);
 
-    const colorGame = infoGame.map(game => { return game.color });//color game selected
+    const colorGame = infoGame.map(game => { return game.color });
 
-    useEffect(() => {//initial bet
+    useEffect(() => {
         setInfoGame([initialGame]);
         setGameSelected(initialGame?.type)
         setActive(true);
+        Animated.timing(animation, { toValue: 1000, duration: 1000, useNativeDriver: true }).start();
     }, [initialGame]);
 
-    const handleGenerateNumbers = useCallback((range: number) => {//generate numbers of range bets
+    const handleGenerateNumbers = useCallback((range: number) => {
         const numberArr = [];
         for (let i = 1; i <= range; i++) {
             numberArr.push(i);
@@ -94,21 +128,23 @@ const NewBet: React.FC = () => {
         return setNumbers(numberArr);
     }, []);
 
-    useEffect(() => {//run function generate numbers of game
+    useEffect(() => {
         handleGenerateNumbers(Number(infoGame.map(game => game?.range)));
     }, [infoGame, handleGenerateNumbers]);
 
-    useEffect(() => {//after user selected game set information on array 
+    useEffect(() => {
         setInfoGame(betsState.filter(game => { return gameSelected === game.type }));
+        setLoader(false);
     }, [betsState, gameSelected]);
 
     const handleClickInButtonChooseGame = useCallback((gameName: string) => {
         setGameSelected(gameName);
         setNumbersUser([]);
         setActive(true);
+        // setLoader(true);
     }, []);
 
-    const handleUserChoseNumber = useCallback((e: number) => {//user selected number 
+    const handleUserChoseNumber = useCallback((e: number) => {
         const limit = infoGame.map(game => game.maxNumber);
         const check = numbersUser.find(numb => numb === Number(e));
         if (numbersUser.length === Number(limit)) {
@@ -134,7 +170,7 @@ const NewBet: React.FC = () => {
         }
     }, [numbersUser, infoGame]);
 
-    const handleGenerateBet = useCallback(() => {//generate numbers of bets
+    const handleGenerateBet = useCallback(() => {
         let bet: number[] = [];
         const range = infoGame.map(game => { return game.range });
         const limit = infoGame.map(game => { return game.maxNumber });
@@ -207,8 +243,7 @@ const NewBet: React.FC = () => {
             dispatch(addProductToCartRequest({
                 id: Number(infoGame.map(game => game.id)),
                 color: String(colorGame),
-                // numbers: numbersUser.sort(compareNumbers).join(','),
-                numbers: String(numbersUser.sort().map(numb => {
+                numbers: String(numbersUser.sort(compareNumbers).map(numb => {
                     return numb < 10 ? '0' + numb : numb;
                 })),
                 type: String(infoGame.map(game => game.type)),
@@ -216,18 +251,76 @@ const NewBet: React.FC = () => {
                 created_at: new Date(),
             }))
             setNumbersUser([]);
-            // addToast({
-            //     type: 'success',
-            //     title: 'Adicionado no carrinho',
-            //     description: 'Você adicionou um jogo ao carrinho',
-            // })
+            Toast.showSuccess('Você adicionou um jogo ao carrinho', {
+                position: Toast.position.CENTER,
+                duration: 500,
+                containerStyle: { backgroundColor: 'green', width: 300 },
+                textStyle: { fontSize: 20 },
+                mask: true
+            });
         } else {
-            // addToast({
-            //     type: 'info',
-            //     title: 'antes de adicionar no carrinho selecione todos os números',
-            // })
+            Toast.show('antes de adicionar no carrinho selecione todos os números', {
+                position: Toast.position.CENTER,
+                duration: 1000,
+                containerStyle: { backgroundColor: 'red', width: 300 },
+                textStyle: { fontSize: 20 },
+                mask: true
+            });
         }
     }, [dispatch, colorGame, infoGame, numbersUser]);
+
+    const handleOpenCart = useCallback(() => {
+        Animated.timing(animation, { toValue: 0, duration: 1000, useNativeDriver: true }).start();
+        setShowAnimation(true);
+    }, []);
+
+    const closedCart = useCallback(() => {
+        Animated.timing(animation, { toValue: 1000, duration: 1000, useNativeDriver: true }).start();
+    }, []);
+
+    const handleSaveGame = useCallback(async () => {
+
+        if (Number(cartPrice) >= 30) {
+            // setLoader(true);
+            const itemInCart: ItemCartProps[] = [];
+            itensInCart.map(item => {
+                return itemInCart.push({
+                    user_id: user.id,
+                    game_id: item.id,
+                    numbers: item.numbers,
+                    price: item.price
+                })
+            });
+
+            await api.post(`/game/bets`, { itemInCart }).then(
+                response => {
+                    if (response.data) {
+                        dispatch(addGamesRequest(itensInCart));
+                        Toast.showSuccess('apostas realizadas', {
+                            position: Toast.position.CENTER,
+                            containerStyle: { backgroundColor: 'green', width: 300 },
+                            textStyle: { fontSize: 20 },
+                            mask: true
+                        });
+                        // setLoader(false);
+                        closedCart();
+                        navigation.navigate('Home');
+                    }
+                }
+            ).catch(err => {
+                return dispatch(addGamesFailure(err.message))
+            });
+        }
+        if (Number(cartPrice) < 30) {
+            Toast.show('faça jogos, ate chegar no valor de R$ 30,00', {
+                position: Toast.position.CENTER,
+                containerStyle: { backgroundColor: 'red', width: 300 },
+                textStyle: { fontSize: 20 },
+                mask: true
+            });
+        }
+    }, [dispatch, itensInCart, cartPrice, Toast, user])
+
 
     const handleDrawerClosed = useCallback(() => {
         if (errorState) {
@@ -239,6 +332,62 @@ const NewBet: React.FC = () => {
 
     return (
         <>
+            {loader && (
+                <View style={{
+                    height: '100%',
+                    width: '100%',
+                    justifyContent: 'center',
+                    position: 'absolute',
+                    zIndex: 3,
+                    backgroundColor: 'rgba(221, 221, 221, 0.8)',
+                }}>
+                    <ActivityIndicator size={200} style={{ }} color="#B5C401" />
+                </View>
+            )}
+            {showAnimation && (
+                <Animated.View style={{
+                    height: '100%',
+                    width: '100%',
+                    // justifyContent: 'center',
+                    alignItems: 'flex-end',
+                    position: 'absolute',
+                    zIndex: 3,
+                    backgroundColor: 'rgba(221, 221, 221, 0.8)',
+                    transform: [{ translateX: animation }]
+                }}>
+                    <View style={{ backgroundColor: '#fff', width: 265 }}>
+                        <Text onPress={closedCart} style={{ color: '#B5C401', textAlign: 'right', paddingRight: 18, fontSize: 30, fontWeight: 'bold', }}>x</Text>
+                    </View>
+                    <TitleCart><Ionicons name="cart-outline" size={35} color="#B5C401" /> CART</TitleCart>
+                    <CartView>
+                        {itensInCart.map(item => (
+                            <CartItem
+                                key={item.numbers}
+                                color={item.color}
+                                type={item.type}
+                                numbers={item.numbers}
+                                price={item.price}
+                                item={item}
+                            />
+                        ))}
+                    </CartView>
+                    <TotalView>
+                        <TotalCartText>CART</TotalCartText>
+                        <SubtitleTotal>TOTAL</SubtitleTotal>
+                        <PriceText>{formatValue(Number(cartPrice))}</PriceText>
+                    </TotalView>
+                    <FinalButton onPress={handleSaveGame}>
+                        <TextFinalButton>Save <AntDesign name="arrowright" size={24} color="#B5C401" /></TextFinalButton>
+                    </FinalButton>
+                </Animated.View>
+
+            )}
+            {itensInCart.length > 0 ? (
+                <>
+                    <ButtonCart onPress={handleOpenCart}><Ionicons name="cart-outline" size={35} color="#B5C401" /></ButtonCart>
+                    <Notification><NotificationText>{itensInCart.length}</NotificationText></Notification>
+                </>
+            ) : null}
             <Header />
             <Container>
                 <Title>NEW BET FOR LOTOMANIA</Title>

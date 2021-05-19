@@ -6,8 +6,8 @@ interface ButtonProps {
 }
 
 export const Container = styled.TouchableOpacity<ButtonProps>`
-    height: 45px;
-    width: 45px;
+    height: 41px;
+    width: 41px;
     background-color : #ADC0C4;
     border-radius: 50px;
     margin: 10px;
@@ -24,5 +24,5 @@ export const Value = styled.Text`
     font-size: 18px;
     font-weight: bold;
     text-align: center;
-    margin-top: 11px;
+    margin-top: 8px;
 `;

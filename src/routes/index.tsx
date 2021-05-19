@@ -6,15 +6,19 @@ import {useAuth} from '../hooks/Auth';
 
 const Routes: React.FC = () => {
   const {user, loading} = useAuth();
+ 
 
   if(loading) {
     return (
       <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-        <ActivityIndicator size="large"  color="#B5C401"/>
+        <ActivityIndicator size={100}   color="#B5C401"/>
       </View>
     )
   }
-  return user ? <AppRoutes /> : <AuthRoutes />;
+
+  
+
+  return user? <AppRoutes /> : <AuthRoutes />;
 }
 
 export default Routes;

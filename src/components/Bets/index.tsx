@@ -1,5 +1,6 @@
 import React from 'react';
 import {View} from 'react-native';
+import { formatValue } from '../../utils/formatValue';
 import { Container,Content,Numbers,TextBetType,TextDate } from './styles';
 
 interface BetProps {

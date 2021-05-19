@@ -25,6 +25,7 @@ export const ViewButtonGame = styled.ScrollView.attrs({
     horizontal: true,
     showsHorizontalScrollIndicator: false,
 })`
+    height: 70px;
 `;
 
 export const ViewNumberSelected = styled.ScrollView.attrs({
@@ -32,7 +33,7 @@ export const ViewNumberSelected = styled.ScrollView.attrs({
     horizontal: true,
     showsHorizontalScrollIndicator: false,
 })`
-    max-height: 100px;
+    height: 100px;
 `;
 
 export const ViewButton = styled.View`
@@ -115,5 +116,90 @@ export const TextAddGame = styled.Text`
     font-size: 13px;
     font-weight: bold;
     text-align: center;
+`;
 
+export const ButtonCart = styled.TouchableOpacity`
+    position: absolute;
+    z-index: 1;
+    right: 80px;
+    top: 26px;
+`;
+
+export const Notification = styled.View`
+    position: absolute;
+    z-index: 2;
+    right: 70px;
+    top: 26px;
+    background-color: #b30;
+    height: 20px;
+    width: 20px;
+    border-radius: 10px;
+`;
+
+export const NotificationText = styled.Text`
+    color: #fff;
+    text-align: center;
+`;
+
+export const CartView = styled.ScrollView`
+    background-color: #fff;
+    width: 265px;
+`;
+
+export const TitleCart = styled.Text`
+    color: #707070;
+    font-size: 22px;
+    font-weight: bold;
+    font-style:italic;
+    padding: 10px 15px; 
+    text-align: left;
+    width: 265px;
+    background-color: #fff;
+`;
+
+export const TotalView = styled.View`
+    width: 265px;
+    background-color: #fff;
+    /* height: 150px; */
+    flex-direction: row;
+    padding: 18px 25px;
+`;
+
+export const TotalCartText = styled.Text`
+    color: #707070;
+    font-size: 15px;
+    font-weight: bold;
+    font-style: italic;
+`;
+
+export const SubtitleTotal = styled.Text`
+    color: #707070;
+    font-size: 15px;
+    font-weight: 900;
+    font-style: italic;
+    margin-left: 5px;
+`;
+
+export const PriceText = styled.Text`
+    color: #707070;
+    font-size: 15px;
+    font-weight: bold;
+    font-style: italic;
+    margin-left: 80px;
+`;
+
+export const FinalButton = styled.TouchableOpacity`
+    width: 265px;
+    align-items: center;
+    justify-content: center;
+    background-color: #EBEBEB;
+    height: 96px;
+    border: none;
+    border-radius: 10px;
+`;
+
+export const TextFinalButton = styled.Text`
+    font-size: 30px;
+    font-weight: bold;
+    color: #B5C401;
 `;
