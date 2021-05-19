@@ -115,10 +115,10 @@ const NewBet: React.FC = () => {
 
     useEffect(() => {
         setInfoGame([initialGame]);
-        setGameSelected(initialGame?.type)
+        setGameSelected(initialGame?.type);
         setActive(true);
         Animated.timing(animation, { toValue: 1000, duration: 1000, useNativeDriver: true }).start();
-    }, [initialGame]);
+    }, [Animated]);
 
     const handleGenerateNumbers = useCallback((range: number) => {
         const numberArr = [];
@@ -134,7 +134,7 @@ const NewBet: React.FC = () => {
 
     useEffect(() => {
         setInfoGame(betsState.filter(game => { return gameSelected === game.type }));
-        setLoader(false);
+        // setLoader(false);
     }, [betsState, gameSelected]);
 
     const handleClickInButtonChooseGame = useCallback((gameName: string) => {
@@ -142,13 +142,14 @@ const NewBet: React.FC = () => {
         setNumbersUser([]);
         setActive(true);
         // setLoader(true);
+
     }, []);
 
     const handleUserChoseNumber = useCallback((e: number) => {
         const limit = infoGame.map(game => game.maxNumber);
         const check = numbersUser.find(numb => numb === Number(e));
         if (numbersUser.length === Number(limit)) {
-            Toast.show('voce ja tem o numero limite de números para esse jogo', {
+            Toast.show('limite de números', {
                 position: Toast.position.CENTER,
                 containerStyle: { backgroundColor: 'red', width: 300 },
                 textStyle: { fontSize: 20 },
@@ -157,7 +158,7 @@ const NewBet: React.FC = () => {
         }
         if (numbersUser.length < Number(limit)) {
             if (check) {
-                Toast.show('voce ja tem o esse número para esse jogo', {
+                Toast.show('ja tem o esse número ', {
                     position: Toast.position.CENTER,
                     containerStyle: { backgroundColor: 'red', width: 300 },
                     textStyle: { fontSize: 20 },
@@ -251,7 +252,7 @@ const NewBet: React.FC = () => {
                 created_at: new Date(),
             }))
             setNumbersUser([]);
-            Toast.showSuccess('Você adicionou um jogo ao carrinho', {
+            Toast.showSuccess('adicionou ao carrinho', {
                 position: Toast.position.CENTER,
                 duration: 500,
                 containerStyle: { backgroundColor: 'green', width: 300 },
@@ -259,7 +260,7 @@ const NewBet: React.FC = () => {
                 mask: true
             });
         } else {
-            Toast.show('antes de adicionar no carrinho selecione todos os números', {
+            Toast.show('selecione todos os números', {
                 position: Toast.position.CENTER,
                 duration: 1000,
                 containerStyle: { backgroundColor: 'red', width: 300 },
@@ -281,7 +282,7 @@ const NewBet: React.FC = () => {
     const handleSaveGame = useCallback(async () => {
 
         if (Number(cartPrice) >= 30) {
-            // setLoader(true);
+            setLoader(true);
             const itemInCart: ItemCartProps[] = [];
             itensInCart.map(item => {
                 return itemInCart.push({
@@ -302,7 +303,7 @@ const NewBet: React.FC = () => {
                             textStyle: { fontSize: 20 },
                             mask: true
                         });
-                        // setLoader(false);
+                        setLoader(false);
                         closedCart();
                         navigation.navigate('Home');
                     }
@@ -352,7 +353,7 @@ const NewBet: React.FC = () => {
                     alignItems: 'flex-end',
                     position: 'absolute',
                     zIndex: 3,
-                    backgroundColor: 'rgba(221, 221, 221, 0.8)',
+                    backgroundColor: 'rgba(221, 221, 221, 0.4)',
                     transform: [{ translateX: animation }]
                 }}>
                     <View style={{ backgroundColor: '#fff', width: 265 }}>
@@ -392,7 +393,7 @@ const NewBet: React.FC = () => {
             <Container>
                 <Title>NEW BET FOR LOTOMANIA</Title>
                 <SubTitle>Choose a game</SubTitle>
-                {errorState ? <Backdrop show={show} clicked={handleDrawerClosed} ><Title>Error</Title></Backdrop> :
+                {errorState ? <Backdrop show={show} clicked={handleDrawerClosed} ><Title style={{color: '#b03b03', textAlign: 'center', width: '80%', backgroundColor: '#fff' ,}}>Ops algo deu errado, clique na tela, caso nao funcione,contate o administrador</Title></Backdrop> :
                     <ViewButtonGame>
                         {betsState.map(game => (
                             <ButtonGames

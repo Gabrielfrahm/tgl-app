@@ -10,14 +10,14 @@ function* checkLoadGames() {
         const availableSGamesResponse: AxiosResponse<GamesProps> = yield call(api.get, "/games",);
         if (availableSGamesResponse.data) {
             yield put(loadGamesSuccess(availableSGamesResponse.data));
+        }else {
+            yield put(loadGamesFailure(true));
         }
     } catch (err) {
-        console.log('chegou');
         yield put(loadGamesFailure(true));
     }
-    
-}
 
+}
 export default all([
     takeLatest(ActionTypes.loadGames, checkLoadGames),
 ])

@@ -9,7 +9,7 @@ import { formatDate } from '../../utils/formatDate';
 import { useDispatch, useSelector } from 'react-redux';
 import { IState } from '../../store';
 import { GamesProps } from '../../store/modules/games/types';
-import { loadGames } from '../../store/modules/games/action';
+import { loadGames, loadGamesFailure } from '../../store/modules/games/action';
 import { Title, SubTitle, ViewButtonGame, ViewBets, Container } from './styles';
 
 export interface ShowBetsProps {
@@ -48,7 +48,6 @@ const Dashboard = () => {
     // bets
     const [games, setGames] = useState<ShowBetsProps[]>([]);
     const [gameFilter, setGameFilter] = useState<ShowBetsProps[]>([]);
-
     useEffect(() => {
         dispatch(loadGames());
 
@@ -56,7 +55,7 @@ const Dashboard = () => {
             response => {
                 setGames(response.data);
             }
-        );
+        )
 
         let arr: ShowBetsProps[] = [];
         gameNames.map(item => {
@@ -64,8 +63,9 @@ const Dashboard = () => {
         });
 
         setGameFilter(arr);
-    }, [dispatch, gameNames, games]);
+    }, [ dispatch,gameNames, ]);
 
+   
 
     const handleClickButtonGameFilter = useCallback(async (gameName: string) => {
         setActive(true);
@@ -107,15 +107,15 @@ const Dashboard = () => {
         } else {
             setShow(false);
         }
-    }, [errorState, dispatch,]);
-
+    }, [errorState]);
+    console.log(errorState)
     return (
         <>
             <Header />
             <Container>
                 <Title>RECENT GAMES</Title>
                 <SubTitle>Filters</SubTitle>
-                {errorState ? <Backdrop show={show} clicked={handleDrawerClosed} ><Title>Error</Title></Backdrop> :
+                {errorState ? <Backdrop show={show} clicked={handleDrawerClosed} ><Title style={{color: '#b03b03', textAlign: 'center', width: '80%', backgroundColor: '#fff' ,}}>Ops algo deu errado, clique na tela, caso nao funcione,contate o administrador</Title></Backdrop> :
                     <ViewButtonGame>
                         {betsState.map(game => (
                             <ButtonGames

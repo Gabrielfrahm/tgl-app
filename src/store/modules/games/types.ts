@@ -1,7 +1,7 @@
 export enum ActionTypes {
     loadGames = 'LOAD_GAMES',
     loadGamesSuccess = 'LOAD_GAMES_SUCCESS',
-    loadGamesSFailure = 'LOAD_GAMES_FAILURE',
+    loadGamesFailure = 'LOAD_GAMES_FAILURE',
 }
 
 export interface GamesProps {

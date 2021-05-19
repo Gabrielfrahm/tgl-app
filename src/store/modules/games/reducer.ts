@@ -19,7 +19,7 @@ const gamesModules: Reducer<GamesState> = (state = INITIAL_STATE, action) => {
                 }
                 break;
             }
-            case ActionTypes.loadGamesSFailure: {
+            case ActionTypes.loadGamesFailure: {
                 const {error} = action.payload;
                 draft.error = error;
                 break;

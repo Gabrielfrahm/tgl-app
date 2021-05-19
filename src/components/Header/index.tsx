@@ -2,20 +2,14 @@ import React, { useEffect } from 'react';
 import {MaterialIcons} from '@expo/vector-icons';
 import {useAuth} from '../../hooks/Auth';
 import { useDispatch } from 'react-redux';
-import { loadGames } from '../../store/modules/games/action';
+import { loadGames, loadGamesFailure } from '../../store/modules/games/action';
 import {Container, Logo} from './styles';
+import api from '../../services/api';
 
 
 const Header: React.FC = () => {
-    useEffect(() => {
-        dispatch(loadGames());
-    }, [])
-
-    const dispatch = useDispatch();
-
 
     const {signOut} = useAuth();
-
 
     return (
         <Container>  
