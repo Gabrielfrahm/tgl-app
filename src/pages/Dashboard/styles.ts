@@ -2,8 +2,8 @@ import styled from 'styled-components/native';
 
 
 export const Container = styled.View`
-    height: 25%;
     padding: 25px;
+    height: 25%;
 `;
 
 export const Title = styled.Text`

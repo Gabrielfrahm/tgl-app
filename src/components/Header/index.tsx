@@ -8,7 +8,10 @@ import api from '../../services/api';
 
 
 const Header: React.FC = () => {
-
+    const dispatch = useDispatch();
+    useEffect(() => {
+        dispatch(loadGames());
+    },[])
     const {signOut} = useAuth();
 
     return (

@@ -31,7 +31,7 @@ const Dashboard = () => {
         return state.games.games;
     });
     // erro games
-    const errorState = useSelector<IState>(state => {
+    const errorGamesState = useSelector<IState>(state => {
         return state.games.error;
     });
 
@@ -55,7 +55,9 @@ const Dashboard = () => {
             response => {
                 setGames(response.data);
             }
-        )
+        ).catch(e => {
+            dispatch(loadGamesFailure(true));
+        }) 
 
         let arr: ShowBetsProps[] = [];
         gameNames.map(item => {
@@ -97,7 +99,7 @@ const Dashboard = () => {
     }, [gameNames, gameFilter]);
 
     const handleDrawerClosed = useCallback(() => {
-        if (errorState) {
+        if (errorGamesState) {
             dispatch(loadGames());
             api.get('/game/bets').then(
                 response => {
@@ -107,15 +109,19 @@ const Dashboard = () => {
         } else {
             setShow(false);
         }
-    }, [errorState]);
-    console.log(errorState)
+    }, [errorGamesState]);
+
     return (
         <>
+            {errorGamesState && <Backdrop show={show} clicked={handleDrawerClosed} >
+                <Title style={{color: '#b03b03', textAlign: 'center', width: '80%', backgroundColor: '#fff' ,}}>Ops algo deu errado, clique na tela, caso nao funcione,contate o administrador</Title>
+                </Backdrop>
+            } 
             <Header />
             <Container>
                 <Title>RECENT GAMES</Title>
                 <SubTitle>Filters</SubTitle>
-                {errorState ? <Backdrop show={show} clicked={handleDrawerClosed} ><Title style={{color: '#b03b03', textAlign: 'center', width: '80%', backgroundColor: '#fff' ,}}>Ops algo deu errado, clique na tela, caso nao funcione,contate o administrador</Title></Backdrop> :
+                
                     <ViewButtonGame>
                         {betsState.map(game => (
                             <ButtonGames
@@ -130,7 +136,7 @@ const Dashboard = () => {
                             >{game.type}</ButtonGames>
                         ))}
                     </ViewButtonGame>
-                }
+                
             </Container>
             <ViewBets>
                     {gameFilter.length === 0 ?

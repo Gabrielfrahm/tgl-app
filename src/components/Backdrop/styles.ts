@@ -2,8 +2,8 @@ import styled from 'styled-components/native';
 
 
 export const BackdropDiv = styled.View`
-    width: 120%;
-    height: 500%;
+    width: 100%;
+    height: 110%;
     position: absolute;
     justify-content: center;
     align-items: center;

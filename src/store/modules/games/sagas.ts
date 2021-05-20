@@ -16,7 +16,6 @@ function* checkLoadGames() {
     } catch (err) {
         yield put(loadGamesFailure(true));
     }
-
 }
 export default all([
     takeLatest(ActionTypes.loadGames, checkLoadGames),

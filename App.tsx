@@ -1,7 +1,6 @@
 import React from 'react';
 import 'react-native-gesture-handler';
 import AppProvider from './src/hooks';
-import CartRoute from './src/routes/cart.routes';
 import { NavigationContainer } from '@react-navigation/native';
 import { View, StatusBar } from 'react-native';
 import { Provider } from 'react-redux';

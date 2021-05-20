@@ -61,18 +61,24 @@ export interface ItemCartProps {
 
 
 const NewBet: React.FC = () => {
+    const dispatch = useDispatch();
     useEffect(() => {
         dispatch(loadGames());
         setShow(true)
-    }, []);
+    }, [dispatch]);
 
     // games
     const betsState = useSelector<IState, GamesProps[]>(state => {
         return state.games.games;
     });
+    
     // erro games
-    const errorState = useSelector<IState>(state => {
+    const errorGameState = useSelector<IState>(state => {
         return state.games.error;
+    });
+    // erro bets
+    const errorBetsState = useSelector<IState>(state => {
+        return state.itemCart.error;
     });
 
     // initial game
@@ -88,7 +94,7 @@ const NewBet: React.FC = () => {
         return state.itemCart.price;
     });
 
-    const dispatch = useDispatch();
+
 
     const { user } = useAuth();
 
@@ -282,7 +288,8 @@ const NewBet: React.FC = () => {
     const handleSaveGame = useCallback(async () => {
 
         if (Number(cartPrice) >= 30) {
-            setLoader(true);
+
+            Animated.timing(animation, { toValue: 1000, duration: 1000, useNativeDriver: true }).start();
             const itemInCart: ItemCartProps[] = [];
             itensInCart.map(item => {
                 return itemInCart.push({
@@ -293,6 +300,7 @@ const NewBet: React.FC = () => {
                 })
             });
 
+            setLoader(true);
             await api.post(`/game/bets`, { itemInCart }).then(
                 response => {
                     if (response.data) {
@@ -304,16 +312,17 @@ const NewBet: React.FC = () => {
                             mask: true
                         });
                         setLoader(false);
-                        closedCart();
+
                         navigation.navigate('Home');
                     }
                 }
             ).catch(err => {
-                return dispatch(addGamesFailure(err.message))
+                setLoader(false);
+                return dispatch(addGamesFailure(true))
             });
         }
         if (Number(cartPrice) < 30) {
-            Toast.show('faça jogos, ate chegar no valor de R$ 30,00', {
+            Toast.show('no minimo R$ 30,00', {
                 position: Toast.position.CENTER,
                 containerStyle: { backgroundColor: 'red', width: 300 },
                 textStyle: { fontSize: 20 },
@@ -324,12 +333,13 @@ const NewBet: React.FC = () => {
 
 
     const handleDrawerClosed = useCallback(() => {
-        if (errorState) {
+        if (errorGameState) {
             dispatch(loadGames());
         } else {
+            dispatch(addGamesFailure(false));
             setShow(false);
         }
-    }, [errorState, dispatch,]);
+    }, [errorGameState, dispatch,]);
 
     return (
         <>
@@ -342,7 +352,7 @@ const NewBet: React.FC = () => {
                     zIndex: 3,
                     backgroundColor: 'rgba(221, 221, 221, 0.8)',
                 }}>
-                    <ActivityIndicator size={200} style={{ }} color="#B5C401" />
+                    <ActivityIndicator size={200} style={{}} color="#B5C401" />
                 </View>
             )}
             {showAnimation && (
@@ -389,11 +399,15 @@ const NewBet: React.FC = () => {
                     <Notification><NotificationText>{itensInCart.length}</NotificationText></Notification>
                 </>
             ) : null}
+            {errorGameState || errorBetsState && <Backdrop show={show} clicked={handleDrawerClosed} >
+                    <Title style={{ color: '#b03b03', textAlign: 'center', width: '80%', backgroundColor: '#fff', }}>Ops algo deu errado, clique na tela, caso nao funcione,contate o administrador</Title>
+                </Backdrop> 
+            }
             <Header />
             <Container>
                 <Title>NEW BET FOR LOTOMANIA</Title>
                 <SubTitle>Choose a game</SubTitle>
-                {errorState ? <Backdrop show={show} clicked={handleDrawerClosed} ><Title style={{color: '#b03b03', textAlign: 'center', width: '80%', backgroundColor: '#fff' ,}}>Ops algo deu errado, clique na tela, caso nao funcione,contate o administrador</Title></Backdrop> :
+                
                     <ViewButtonGame>
                         {betsState.map(game => (
                             <ButtonGames
@@ -408,7 +422,7 @@ const NewBet: React.FC = () => {
                             >{game.type}</ButtonGames>
                         ))}
                     </ViewButtonGame>
-                }
+
                 {numbersUser.length === 0
                     ?
                     <ViewDescription>
